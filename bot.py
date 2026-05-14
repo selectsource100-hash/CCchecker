@@ -11,7 +11,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
 # --- CONFIG ---
-TOKEN = os.getenv("8517671449:AAFlKS7HTklirD5szxeiroCIwxxYI2LYwSU")
+TOKEN = "8517671449:AAFlKS7HTklirD5szxeiroCIwxxYI2LYwSU"
 
 # --- ACCOUNT POOL ---
 ACCOUNT_POOL = [
