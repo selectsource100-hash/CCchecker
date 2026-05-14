@@ -8,7 +8,7 @@ import cloudscraper
 import concurrent.futures
 from datetime import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 # --- CONFIG ---
 TOKEN = "8517671449:AAFlKS7HTklirD5szxeiroCIwxxYI2LYwSU"
@@ -135,7 +135,7 @@ def stripe_engine(card_line, proxy=None, mode="auth"):
         addnonce_match = re.search(r'"createAndConfirmSetupIntentNonce":"([a-z0-9]+)"', r_page.text)
         
         if not pk_live_match or not addnonce_match:
-            return format_response(card_line, "𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "Page Error", bin_data)
+            return format_response(card_line, "𝗦𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "Page Error", bin_data)
             
         pk_live = pk_live_match.group(0)
         addnonce = addnonce_match.group(1)
@@ -173,7 +173,7 @@ def stripe_engine(card_line, proxy=None, mode="auth"):
         if mode == "vbv":
             vbv_status = r_stripe.get('card', {}).get('three_d_secure_usage', {}).get('supported', 'unknown')
             if str(vbv_status).lower() in ['supported', 'true']:
-                return format_response(card_line, "𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "false", bin_data)
+                return format_response(card_line, "𝗦𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "false", bin_data)
             else:
                 return format_response(card_line, "𝗗𝗲𝗰𝗹𝗶𝗻𝗲 ❌", "true", bin_data)
 
@@ -188,9 +188,9 @@ def stripe_engine(card_line, proxy=None, mode="auth"):
         r_ajax = r_ajax_req.text
         
         if '"success":true' in r_ajax.lower() or 'insufficient_funds' in r_ajax.lower(): 
-            return format_response(card_line, "𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "Approved", bin_data)
+            return format_response(card_line, "𝗦𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "Approved", bin_data)
         if 'incorrect_cvc' in r_ajax.lower(): 
-            return format_response(card_line, "𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "CVC Matched", bin_data)
+            return format_response(card_line, "𝗦𝘁𝗮𝘁𝘂𝘀 -» 𝗔𝗽𝗽𝗿𝗼𝘃𝗲𝗱 ✅", "CVC Matched", bin_data)
         
         reason = re.search(r'message\":\"(.*?)\"', r_ajax)
         msg = reason.group(1) if reason else 'Rejected'
@@ -274,7 +274,7 @@ async def mchk(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cards = re.findall(r'\d{15,16}\|\d{1,2}\|\d{2,4}\|\d{3,4}', input_text)
     if not cards: return await update.message.reply_text("❌ <b>𝗡𝗼 𝘃𝗮𝗹𝗶𝗱 𝗰𝗮𝗿𝗱𝘀 𝗳𝗼𝘂𝗻𝗱.</b>", parse_mode='HTML')
     
-    cards = cards[:100000]
+    cards = cards[:100]
     user_id = update.effective_user.id
     user_proxy = USER_DATA.get(user_id, {}).get('proxy')
     
@@ -385,7 +385,7 @@ if __name__ == '__main__':
     if not TOKEN:
         print("Error: TELEGRAM_BOT_TOKEN not found")
         exit(1)
-    app = ApplicationBuilder().token(TOKEN).build()
+    app = Application.builder().token(TOKEN).build()
     
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
